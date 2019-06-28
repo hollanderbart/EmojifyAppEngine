@@ -4,13 +4,13 @@ import com.google.cloud.storage.Bucket
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
 import com.google.cloud.vision.v1.*
+import org.omg.CORBA.Object
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
 import java.awt.Polygon
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
@@ -68,12 +68,29 @@ data class EmojifyResponse(
         val errorMessage: String? = null
 )
 
+data class Email(
+        val sender: String,
+        val recipient: String? = null,
+        val subject: String? = null,
+        val body_plain: String? = null
+)
+
 @RestController
 class EmojifyController(@Value("\${storage.bucket.name}") val bucketName: String, val storage: Storage, val vision: ImageAnnotatorClient) {
 
     @GetMapping("/")
     fun hello(): String {
         return "Hi there!"
+    }
+
+    @GetMapping("/benjamin")
+    fun helloBenjamin(): String {
+        return "Hi ben!"
+    }
+
+    @PostMapping("/sendemail")
+    fun readEmail(@RequestBody email: Email) {
+        log.info("email received")
     }
 
     companion object {
